@@ -1,5 +1,7 @@
 # Copaper CLI
 
+当前版本：**0.1.1**。代码统一维护在 `main`，每个版本的改动见 [CHANGELOG.md](CHANGELOG.md)，发布步骤见 [RELEASING.md](RELEASING.md)。
+
 用 Python 命令行直接访问 Copaper：管理项目、同步论文源文件、编译并下载 PDF。使用网站创建的 API Key 登录，无需提取浏览器 Cookie。
 
 命令名为 **`cp-cli`**，需要 **Python 3.10 或更新版本**。运行 CLI 不需要 Node.js 或本机 LaTeX。

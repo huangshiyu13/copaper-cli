@@ -6,6 +6,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from . import __version__
 from .config import normalize_url, validate_key
 from .errors import CliError, redact
 
@@ -40,7 +41,7 @@ class Client:
         request_headers = {
             "Authorization": f"Bearer {self.key}",
             "Accept": "application/octet-stream" if binary else "application/json",
-            "User-Agent": "copaper-cli/0.1.0",
+            "User-Agent": f"copaper-cli/{__version__}",
         }
         if headers:
             request_headers.update(headers)
