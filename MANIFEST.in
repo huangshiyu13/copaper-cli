@@ -1,0 +1,9 @@
+include README.md LICENSE SECURITY.md CONTRIBUTING.md
+recursive-include docs *.md
+recursive-include tests *.py
+recursive-include tools *.py
+prune .venv
+prune artifacts
+prune coverage
+prune htmlcov
+global-exclude *.py[cod] *.log *.key *.pem .env credentials.json secrets.json
