@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-18
+
+- 新增 `cp-cli comments`，支持按文件及状态读取评论、创建选区评论、回复、编辑、删除、解决和重新打开。
+- 支持查询项目成员，以姓名或成员 ID 在评论与回复中提及协作者。
+- 新增评论 API 的文档及端到端请求格式测试。
+- 通过 182 项测试。语句覆盖率 99.58%，分支覆盖率 98.42%。
+
 ## [0.1.1] - 2026-11-17
 
 ### 变更
@@ -35,6 +42,7 @@
 - 180 个测试通过；语句覆盖率 99.54%，分支覆盖率 98.24%。
 - 已安装 wheel 的真实网站流程通过：登录、双向同步、二进制文件操作、编译和 PDF/ZIP 下载；验收 Key 和项目已清理。
 
-[Unreleased]: https://github.com/huangshiyu13/copaper-cli/compare/v0.1.1...main
+[Unreleased]: https://github.com/huangshiyu13/copaper-cli/compare/v0.2.0...main
+[0.2.0]: https://github.com/huangshiyu13/copaper-cli/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/huangshiyu13/copaper-cli/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/huangshiyu13/copaper-cli/tree/v0.1.0

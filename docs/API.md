@@ -8,6 +8,25 @@ Responses use JSON except file, output and ZIP downloads. Errors have `{"error":
 
 Keys have `read`, `write` and `compile` capabilities, an expiry, and optionally an allowlist of projects. A key cannot grant permissions beyond its owner's current project access. Read-only collaborators cannot write even with a write-capable key. Project-restricted keys cannot create projects.
 
+## Project review
+
+Paths below are relative to `/projects/{projectId}`. All operations are scoped to that project's members and the key's project allowlist.
+
+| Method and path | Scope | Input and result |
+| --- | --- | --- |
+| `GET /members` | read | `{members: [{id, name}]}` |
+| `GET /comments` | read | Optional `status=all\|open\|resolved` and `path` filters. Returns `{threads: [...]}`. |
+| `GET /comments/{id}` | read | One thread with its file path, selected text, resolution state, and messages. |
+| `POST /comments` | write | `{path, content, from?, to?, quote?, id?}`. Returns the new thread ID, path, quote, and message. |
+| `POST /comments/{id}/replies` | write | `{content}`. Returns the thread ID and new reply. |
+| `PATCH /comments/{id}` | write | `{content, messageId?}`. Edits the first message by default. |
+| `POST /comments/{id}/resolve`, `POST /comments/{id}/reopen` | write | Set the thread state. |
+| `DELETE /comments/{id}` | write | Delete a thread, or supply the `messageId` query argument to delete one reply. |
+
+For creation, provide `from` or `quote`. `from` and `to` are inclusive, one-based line numbers, with `to` defaulting to `from`. If supplied, `quote` must match exactly once within the line range or document. A missing or ambiguous selection returns HTTP 409. Reusing an explicit thread ID with the same author, content, and document returns the existing thread for a retry.
+
+Mention a project member with `@[memberId]` in the comment or reply content. Threads and messages use 24-character lowercase hexadecimal IDs. Each message includes `id`, `content`, `author: {id, name}`, `timestamp`, and `editedAt`; absent edit times are null. A thread whose source selection is unavailable can have null `path` and `quote`. Only the message author can edit its content.
+
 Project and build identifiers are opaque strings. Use the identifiers returned by the API.
 
 | Method | Endpoint | Capability | Result |

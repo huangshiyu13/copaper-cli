@@ -1,8 +1,8 @@
 # Copaper CLI
 
-当前版本：**0.1.1**。代码统一维护在 `main`，每个版本的改动见 [CHANGELOG.md](CHANGELOG.md)，发布步骤见 [RELEASING.md](RELEASING.md)。
+当前版本：**0.2.0**。代码统一维护在 `main`，每个版本的改动见 [CHANGELOG.md](CHANGELOG.md)，发布步骤见 [RELEASING.md](RELEASING.md)。
 
-用 Python 命令行直接访问 Copaper：管理项目、同步论文源文件、编译并下载 PDF。使用网站创建的 API Key 登录，无需提取浏览器 Cookie。
+用 Python 命令行直接访问 Copaper，管理项目、同步论文源文件、编译并下载 PDF，以及处理审阅评论。使用网站创建的 API Key 登录，无需提取浏览器 Cookie。
 
 命令名为 **`cp-cli`**，需要 **Python 3.10 或更新版本**。运行 CLI 不需要 Node.js 或本机 LaTeX。
 
@@ -141,6 +141,35 @@ cp-cli zip -o source.zip
 `rename` / `mv` 和 `delete` / `rm` 同时支持文件与文件夹。操作使用最新项目版本作为前提；并发变更会中止操作。
 
 下载不会默认覆盖已有本地文件；确认要覆盖时添加 `--force`。路径不能越出项目目录，也不能通过符号链接读取或覆盖其他文件。
+
+## 审阅评论
+
+评论在网页审阅面板和 CLI 之间同步。读取评论和成员列表需要 `read` 权限，创建和修改评论需要 `write` 权限及相应的项目权限。命令在已绑定的项目目录内运行，也可以按下文示例显式指定项目。
+
+```bash
+cp-cli comments list
+cp-cli comments list "Paper One" --status open --file main.tex
+cp-cli comments members
+cp-cli comments add main.tex '请 @{Alex Lee} 核对这个定义' --from 12 --to 14
+cp-cli comments add main.tex '这里需要引用' --quote 'Exact text in the document' --project "Paper One"
+```
+
+行号从 1 起算，包含首尾行。只给 `--from` 时选中整行。`--quote` 匹配远端文档中的原文，出现多次时可加 `--from` 和 `--to` 缩小查找范围。姓名匹配成员列表中的完整显示名。遇到重名时使用 `@[成员ID]`。用姓名提及时，Key 需要 `read` 权限查询成员。
+
+从输出的 `id` 取得线程 ID。从 `messages` 中取得单条回复的消息 ID。
+
+```bash
+cp-cli comments show "$THREAD_ID"
+cp-cli comments reply "$THREAD_ID" '已补充说明'
+cp-cli comments edit "$THREAD_ID" '请复核更新后的定义'
+cp-cli comments edit "$THREAD_ID" '回复已更新' --message-id "$MESSAGE_ID"
+cp-cli comments resolve "$THREAD_ID"
+cp-cli comments reopen "$THREAD_ID"
+cp-cli comments delete "$THREAD_ID" --message-id "$MESSAGE_ID"
+cp-cli comments delete "$THREAD_ID"
+```
+
+`edit` 默认修改首条评论，`delete` 默认删除整条线程及回复。使用 `--message-id` 时只操作指定回复。编辑限于作者本人，解决、重新打开及删除受项目权限控制。
 
 ## 编译和导出
 

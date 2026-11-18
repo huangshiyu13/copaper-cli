@@ -151,7 +151,7 @@ class Fixture:
                 except (BrokenPipeError, ConnectionResetError):
                     pass
 
-            do_GET = do_POST = do_PATCH = do_PUT = handle_request
+            do_GET = do_POST = do_PATCH = do_PUT = do_DELETE = handle_request
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.url = f"http://127.0.0.1:{self.server.server_port}"

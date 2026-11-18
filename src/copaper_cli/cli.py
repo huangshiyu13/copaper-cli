@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import quote, urlsplit
 
 from . import __version__
+from .comments import execute_comments, register_comments
 from .config import Store, normalize_url, validate_key
 from .errors import CliError, redact
 from .files import (
@@ -32,7 +33,7 @@ class Parser(argparse.ArgumentParser):
 
 
 def parser() -> Parser:
-    root = Parser(prog="cp-cli", description="使用 API Key 管理 Copaper 项目、同步文件和编译论文。")
+    root = Parser(prog="cp-cli", description="使用 API Key 管理 Copaper 项目、文件、编译和评论。")
     root.add_argument("--version", action="version", version=f"cp-cli {__version__}")
     root.add_argument("--base-url", help="Copaper 站点地址")
     root.add_argument("--timeout", type=float, help="请求超时秒数（1–600）")
@@ -109,6 +110,7 @@ def parser() -> Parser:
     output.add_argument("-o", "--output")
     output.add_argument("--force", action="store_true")
     commands.add_parser("ignored").add_argument("directory", nargs="?", default=".")
+    register_comments(commands)
     return root
 
 
@@ -264,6 +266,9 @@ def execute(args, store: Store, stdout, stderr, stdin) -> int:
     workspace = Workspace(Path(getattr(args, "directory", None) or "."), protected=store.directory)
     project = resolve_project(client, getattr(args, "project", None), workspace)
     endpoint = client.project_path(project)
+    if args.command in {"comments", "comment"}:
+        emit(execute_comments(args, client, endpoint))
+        return 0
     if args.command == "project":
         emit(client.request("PATCH", endpoint, {"name": args.name}))
         return 0
