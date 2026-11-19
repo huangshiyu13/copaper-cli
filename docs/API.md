@@ -8,6 +8,8 @@ Responses use JSON except file, output and ZIP downloads. Errors have `{"error":
 
 Keys have `read`, `write` and `compile` capabilities, an expiry, and optionally an allowlist of projects. A key cannot grant permissions beyond its owner's current project access. Read-only collaborators cannot write even with a write-capable key. Project-restricted keys cannot create projects.
 
+Copaper CLI identifies its installed version in `User-Agent: copaper-cli/X.Y.Z`. Sites with a minimum version reject outdated CLI requests before running the operation. They return HTTP 400 with error code `cli_upgrade_required`, the reported `clientVersion`, `minimumCliVersion`, and an `upgradeUrl`. On these sites, `GET /me` also returns `serverVersion` and `minimumCliVersion`.
+
 ## Project review
 
 Paths below are relative to `/projects/{projectId}`. All operations are scoped to that project's members and the key's project allowlist.

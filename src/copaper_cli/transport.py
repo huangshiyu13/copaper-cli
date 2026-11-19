@@ -1,6 +1,7 @@
 """HTTPS transport for the public Copaper API; redirects never carry a key."""
 
 import json
+import re
 import socket
 import urllib.error
 import urllib.parse
@@ -12,6 +13,8 @@ from .errors import CliError, redact
 
 MAX_FILE = 32 * 1024 * 1024
 MAX_DOWNLOAD = 256 * 1024 * 1024
+UPGRADE_GUIDE = "https://github.com/huangshiyu13/copaper-cli#安装"
+STABLE_VERSION = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")
 
 
 class NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -76,12 +79,21 @@ class Client:
                     raise CliError("服务器返回了无效的 API 响应") from error
         except urllib.error.HTTPError as error:
             message = ""
+            details = {}
             try:
-                payload = json.loads(error.read(65536))
-                message = payload.get("error", {}).get("message", "")
+                details = json.loads(error.read(65536)).get("error", {})
+                message = details.get("message", "")
             except (ValueError, AttributeError):
-                pass
-            if 300 <= error.code < 400:
+                details = {}
+            if details.get("code") == "cli_upgrade_required":
+                minimum = details.get("minimumCliVersion")
+                requirement = (
+                    f"站点最低支持 {minimum}。"
+                    if isinstance(minimum, str) and STABLE_VERSION.fullmatch(minimum)
+                    else ""
+                )
+                message = f"当前 Copaper CLI {__version__} 需要升级。{requirement}升级说明 {UPGRADE_GUIDE}"
+            elif 300 <= error.code < 400:
                 message = "服务器重定向已被阻止，请确认站点地址；Key 未被转发"
             elif error.code == 401:
                 message = "API Key 无效、已过期或已撤销，请重新登录"

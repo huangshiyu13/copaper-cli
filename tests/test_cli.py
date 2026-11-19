@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from copaper_cli import __version__
 from copaper_cli.cli import main, resolve_project
 from copaper_cli.errors import CliError
 from copaper_cli.files import Workspace
@@ -43,6 +44,31 @@ def test_login_key_stdin_prompt_and_auth_status(run_cli, server, store, monkeypa
     assert store.path.read_bytes() == original
     assert run_cli("logout")[0] == 0
     assert "credential" not in store.load()
+
+
+@pytest.mark.parametrize("minimum", ["10.12.0", None, "invalid"])
+def test_upgrade_required_stops_commands_and_reports_versions(run_cli, server, minimum):
+    server.override = lambda *args: (
+        400,
+        {},
+        {
+            "error": {
+                "code": "cli_upgrade_required",
+                "minimumCliVersion": minimum,
+                "upgradeUrl": "https://untrusted.example.test/",
+                "message": server.key,
+            }
+        },
+    )
+    code, out, err = run_cli("list")
+    assert code == 1 and not out
+    assert f"Copaper CLI {__version__}" in err and "升级" in err
+    assert "https://github.com/huangshiyu13/copaper-cli" in err
+    assert ("10.12.0" in err) == (minimum == "10.12.0")
+    assert server.key not in err and "untrusted.example.test" not in err
+    assert len(server.requests) == 1
+    headers = {name.lower(): value for name, value in server.requests[0][3].items()}
+    assert headers["user-agent"] == f"copaper-cli/{__version__}"
 
 
 def test_config_and_origin_binding(run_cli, server, store):

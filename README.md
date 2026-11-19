@@ -1,6 +1,6 @@
 # Copaper CLI
 
-当前版本：**0.2.0**。代码统一维护在 `main`，每个版本的改动见 [CHANGELOG.md](CHANGELOG.md)，发布步骤见 [RELEASING.md](RELEASING.md)。
+当前版本：**0.3.0**。代码统一维护在 `main`，每个版本的改动见 [CHANGELOG.md](CHANGELOG.md)，发布步骤见 [RELEASING.md](RELEASING.md)。
 
 用 Python 命令行直接访问 Copaper，管理项目、同步论文源文件、编译并下载 PDF，以及处理审阅评论。使用网站创建的 API Key 登录，无需提取浏览器 Cookie。
 
@@ -42,6 +42,8 @@ cp-cli --help
 uv tool upgrade copaper-cli
 # 或：pipx upgrade copaper-cli
 ```
+
+CLI 每次访问站点都会声明自己的版本。低于站点最低要求时，命令会停止，并显示当前版本、最低版本和升级说明。兼容站点的 `cp-cli whoami` 输出包含 `serverVersion` 和 `minimumCliVersion`。
 
 ## 创建 Key 和登录
 

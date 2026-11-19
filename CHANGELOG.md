@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-19
+
+- 处理站点的最低 CLI 版本要求，显示当前版本、最低版本和升级说明。
+- 支持在 `cp-cli whoami` 中查看站点返回的版本信息。
+- 通过 185 项测试，语句覆盖率 99.59%，分支覆盖率 98.43%。
+
 ## [0.2.0] - 2026-11-18
 
 - 新增 `cp-cli comments`，支持按文件及状态读取评论、创建选区评论、回复、编辑、删除、解决和重新打开。
@@ -42,7 +48,8 @@
 - 180 个测试通过；语句覆盖率 99.54%，分支覆盖率 98.24%。
 - 已安装 wheel 的真实网站流程通过：登录、双向同步、二进制文件操作、编译和 PDF/ZIP 下载；验收 Key 和项目已清理。
 
-[Unreleased]: https://github.com/huangshiyu13/copaper-cli/compare/v0.2.0...main
+[Unreleased]: https://github.com/huangshiyu13/copaper-cli/compare/v0.3.0...main
+[0.3.0]: https://github.com/huangshiyu13/copaper-cli/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/huangshiyu13/copaper-cli/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/huangshiyu13/copaper-cli/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/huangshiyu13/copaper-cli/tree/v0.1.0
